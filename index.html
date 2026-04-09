@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>우리 반 1인1역</title>
+<title>1인1역 다이어리</title>
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#8fc977">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -567,7 +567,7 @@
   <!-- 헤더 -->
   <div class="header">
     <div class="title-row" onclick="editTitle()" title="제목 수정">
-      <div class="title" id="title">우리 반 1인1역</div>
+      <div class="title" id="title">1인1역 다이어리</div>
       <span class="title-edit-icon">✏️</span>
     </div>
     <div class="header-bottom">
@@ -687,7 +687,7 @@
 // ============ 데이터 관리 ============
 const STORAGE_KEY = 'class_roles_data_v1';
 const DEFAULT_DATA = {
-  title: '우리 반 1인1역',
+  title: '1인1역 다이어리',
   roles: [
     { id: 1, emoji: '✏️', name: '칠판 도우미', desc: '칠판과 분필 정리', members: ['학생1'] },
     { id: 2, emoji: '📋', name: '출석부 도우미', desc: '이동 수업 시 출석부 챙기기', members: ['학생2', '학생3'] },
@@ -1169,7 +1169,7 @@ function openMemberDetail(memberName) {
 
 // ============ 제목 편집 ============
 function editTitle() {
-  const newTitle = prompt('우리 반 1인1역의 제목을 입력하세요', data.title);
+  const newTitle = prompt('1인1역 다이어리의 제목을 입력하세요', data.title);
   if (newTitle !== null && newTitle.trim()) {
     data.title = newTitle.trim();
     saveData();
@@ -1210,7 +1210,7 @@ function importData(event) {
       if (!data.checks) data.checks = {};
       saveData();
       closeModal('backup-modal');
-      document.getElementById('title').textContent = data.title || '우리 반 1인1역';
+      document.getElementById('title').textContent = data.title || '1인1역 다이어리';
       showView('main');
       alert('데이터를 불러왔어요!');
     } catch (err) {
@@ -1266,8 +1266,8 @@ function refreshTodayDisplay() {
 }
 
 function init() {
-  document.getElementById('title').textContent = data.title || '우리 반 1인1역';
-  document.title = data.title || '우리 반 1인1역';
+  document.getElementById('title').textContent = data.title || '1인1역 다이어리';
+  document.title = data.title || '1인1역 다이어리';
   refreshTodayDisplay();
   showView('main');
   // 1분마다 날짜 체크 (자정 넘으면 자동 갱신)
