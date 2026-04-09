@@ -4,6 +4,14 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>우리 반 1인1역</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#8fc977">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="1인1역">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+<link rel="icon" type="image/png" sizes="512x512" href="icon-512.png">
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
   :root {
@@ -1266,6 +1274,13 @@ function init() {
   setInterval(refreshTodayDisplay, 60 * 1000);
 }
 init();
+
+// Service Worker 등록 (PWA)
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function() {
+    navigator.serviceWorker.register('sw.js').catch(function() {});
+  });
+}
 </script>
 </body>
 </html>
