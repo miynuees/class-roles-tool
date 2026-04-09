@@ -1,0 +1,1271 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>우리 반 1인1역</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #f6fbf3;
+    --card: #ffffff;
+    --primary: #8fc977;
+    --primary-dark: #6fb353;
+    --primary-soft: #e3f3d7;
+    --accent: #ffb3c7;
+    --text: #3a4a32;
+    --text-soft: #708268;
+    --border: #d9ead0;
+    --shadow: 0 4px 14px rgba(120, 160, 100, 0.12);
+    --warn: #ff8a8a;
+  }
+  body {
+    font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Malgun Gothic', sans-serif;
+    background: linear-gradient(180deg, #f1faea 0%, #f6fbf3 100%);
+    color: var(--text);
+    min-height: 100vh;
+    padding: 16px;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .wrap { max-width: 1100px; margin: 0 auto; }
+
+  /* 헤더 */
+  .header {
+    background: var(--card);
+    border-radius: 20px;
+    padding: 16px 22px 14px;
+    box-shadow: var(--shadow);
+    margin-bottom: 16px;
+    text-align: center;
+  }
+  .title-row {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    justify-content: center;
+    margin-bottom: 10px;
+    cursor: pointer;
+    padding: 4px 12px;
+    border-radius: 12px;
+    transition: background 0.2s;
+  }
+  .title-row:hover { background: var(--primary-soft); }
+  .title {
+    font-size: 24px;
+    font-weight: 800;
+    color: var(--text);
+  }
+  .title-edit-icon { font-size: 14px; opacity: 0.5; }
+  .header-bottom {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .today {
+    font-size: 13px;
+    color: var(--text-soft);
+    background: var(--primary-soft);
+    padding: 5px 12px;
+    border-radius: 999px;
+    font-weight: 600;
+  }
+  .header-btns { display: flex; gap: 8px; flex-wrap: wrap; }
+  .btn {
+    background: var(--primary-soft);
+    color: var(--text);
+    border: none;
+    padding: 8px 14px;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.15s;
+    font-family: inherit;
+  }
+  .btn:hover { background: var(--primary); color: white; }
+  .btn-primary { background: var(--primary); color: white; }
+  .btn-primary:hover { background: var(--primary-dark); }
+  .btn-warn { background: #ffe5e5; color: #c44; }
+  .btn-warn:hover { background: var(--warn); color: white; }
+
+  /* 진행률 */
+  .progress {
+    background: var(--card);
+    border-radius: 20px;
+    padding: 18px 22px;
+    box-shadow: var(--shadow);
+    margin-bottom: 16px;
+  }
+  .progress-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+  .progress-label { font-size: 14px; font-weight: 600; color: var(--text-soft); }
+  .progress-count { font-size: 18px; font-weight: 800; color: var(--primary-dark); }
+  .progress-bar-bg {
+    height: 14px;
+    background: var(--primary-soft);
+    border-radius: 999px;
+    overflow: hidden;
+  }
+  .progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--primary) 0%, #b3dd9a 100%);
+    border-radius: 999px;
+    transition: width 0.4s ease;
+  }
+  .motivate { margin-top: 10px; font-size: 13px; color: var(--text-soft); text-align: center; }
+
+  /* 역할 카드 */
+  .role-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(165px, 1fr));
+    gap: 10px;
+  }
+  .role-card {
+    background: var(--card);
+    border-radius: 14px;
+    padding: 10px 12px;
+    box-shadow: var(--shadow);
+    border: 2px solid transparent;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+  }
+  .role-card:hover { transform: translateY(-2px); border-color: var(--primary-soft); }
+  .role-card.checked {
+    background: linear-gradient(135deg, #f3fae9 0%, #e7f5d7 100%);
+    border-color: var(--primary);
+  }
+  .role-emoji { font-size: 26px; display: block; margin-bottom: 3px; }
+  .role-name { font-size: 14px; font-weight: 800; color: var(--text); margin-bottom: 3px; }
+  .role-desc {
+    font-size: 11px;
+    color: var(--text-soft);
+    line-height: 1.4;
+    margin-bottom: 6px;
+    min-height: 0;
+  }
+  .members-row { display: flex; flex-wrap: wrap; gap: 3px; margin-bottom: 6px; }
+  .member-chip {
+    background: #f0f5ec;
+    color: var(--text-soft);
+    padding: 2px 7px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 600;
+  }
+  .member-chip.done { background: var(--primary); color: white; }
+  .check-status {
+    text-align: center;
+    padding: 5px;
+    background: var(--primary-soft);
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text);
+  }
+  .role-card.checked .check-status { background: var(--primary); color: white; }
+  .empty-msg {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--text-soft);
+    background: var(--card);
+    border-radius: 20px;
+    box-shadow: var(--shadow);
+  }
+  .empty-msg h3 { font-size: 18px; margin-bottom: 8px; color: var(--text); }
+  .empty-msg p { font-size: 14px; margin-bottom: 16px; }
+
+  /* 모달 공통 */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(60, 80, 50, 0.45);
+    z-index: 100;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+  }
+  .modal-overlay.active { display: flex; }
+  .modal {
+    background: var(--card);
+    border-radius: 22px;
+    padding: 24px;
+    max-width: 480px;
+    width: 100%;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 12px 40px rgba(0,0,0,0.2);
+  }
+  .modal-wide { max-width: 900px; }
+  .modal-emoji { font-size: 48px; text-align: center; margin-bottom: 6px; }
+  .modal-title {
+    font-size: 22px;
+    font-weight: 800;
+    text-align: center;
+    margin-bottom: 14px;
+    color: var(--text);
+  }
+  .modal-desc { font-size: 13px; color: var(--text-soft); text-align: center; margin-bottom: 14px; }
+  .modal-members {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: center;
+    margin-bottom: 18px;
+  }
+  .member-btn {
+    background: #f0f5ec;
+    color: var(--text);
+    border: 2px solid transparent;
+    padding: 10px 16px;
+    border-radius: 12px;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.15s;
+  }
+  .member-btn:hover { border-color: var(--primary); }
+  .member-btn.selected { background: var(--primary); color: white; }
+  .modal-actions { display: flex; gap: 10px; justify-content: flex-end; flex-wrap: wrap; }
+
+  /* 편집 모드 */
+  .edit-section {
+    background: var(--card);
+    border-radius: 18px;
+    padding: 18px;
+    box-shadow: var(--shadow);
+    margin-bottom: 14px;
+  }
+  .edit-section-title {
+    font-size: 16px;
+    font-weight: 800;
+    color: var(--text);
+    margin-bottom: 12px;
+  }
+  .edit-role-row {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    padding: 10px;
+    background: #fafdf7;
+    border-radius: 12px;
+    margin-bottom: 8px;
+    flex-wrap: wrap;
+  }
+  .edit-emoji {
+    font-size: 26px;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: white;
+    border-radius: 12px;
+    cursor: pointer;
+    border: 2px solid var(--border);
+    flex-shrink: 0;
+  }
+  .edit-input {
+    border: 2px solid var(--border);
+    border-radius: 10px;
+    padding: 8px 12px;
+    font-size: 14px;
+    font-family: inherit;
+    color: var(--text);
+    background: white;
+    outline: none;
+    transition: border-color 0.15s;
+  }
+  .edit-input:focus { border-color: var(--primary); }
+  .edit-name { flex: 1; min-width: 100px; font-weight: 700; }
+  .edit-desc { flex: 2; min-width: 150px; }
+  .edit-members-wrap {
+    width: 100%;
+    margin-top: 8px;
+    padding-left: 58px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    align-items: center;
+  }
+  .edit-member-chip {
+    background: white;
+    border: 2px solid var(--border);
+    border-radius: 999px;
+    padding: 4px 8px 4px 12px;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 13px;
+    font-weight: 600;
+  }
+  .chip-x {
+    cursor: pointer;
+    background: #f0f0f0;
+    border-radius: 50%;
+    width: 18px;
+    height: 18px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    color: #888;
+  }
+  .chip-x:hover { background: var(--warn); color: white; }
+  .add-member-input {
+    border: 2px dashed var(--border);
+    border-radius: 999px;
+    padding: 4px 12px;
+    font-size: 13px;
+    font-family: inherit;
+    width: 90px;
+    background: transparent;
+    outline: none;
+  }
+  .add-member-input:focus { border-color: var(--primary); border-style: solid; }
+  .role-actions { display: flex; gap: 4px; flex-shrink: 0; }
+  .icon-btn {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    width: 30px;
+    height: 30px;
+    border-radius: 8px;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .icon-btn:hover { background: var(--primary-soft); }
+  .icon-btn.del:hover { background: #ffe5e5; }
+  .add-role-btn {
+    width: 100%;
+    padding: 14px;
+    background: var(--primary-soft);
+    border: 2px dashed var(--primary);
+    border-radius: 12px;
+    color: var(--primary-dark);
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: inherit;
+    margin-top: 4px;
+  }
+  .add-role-btn:hover { background: var(--primary); color: white; }
+
+  /* 이모지 피커 */
+  .emoji-picker {
+    display: grid;
+    grid-template-columns: repeat(8, 1fr);
+    gap: 6px;
+    max-height: 280px;
+    overflow-y: auto;
+    padding: 8px;
+    background: #fafdf7;
+    border-radius: 12px;
+  }
+  .emoji-pick {
+    font-size: 24px;
+    cursor: pointer;
+    padding: 6px;
+    border-radius: 8px;
+    text-align: center;
+    transition: background 0.15s;
+  }
+  .emoji-pick:hover { background: var(--primary-soft); }
+
+  /* 연간 기록 탭 */
+  .yearly-tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 14px;
+    background: var(--card);
+    padding: 8px;
+    border-radius: 14px;
+    box-shadow: var(--shadow);
+  }
+  .yearly-tab-btn {
+    flex: 1;
+    background: transparent;
+    color: var(--text-soft);
+    border: none;
+    padding: 10px 14px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .yearly-tab-btn:hover { background: var(--primary-soft); }
+  .yearly-tab-btn.active {
+    background: var(--primary);
+    color: white;
+  }
+
+  /* 연간 기록 */
+  .yearly-section {
+    background: var(--card);
+    border-radius: 18px;
+    padding: 18px;
+    box-shadow: var(--shadow);
+    margin-bottom: 14px;
+  }
+  .yearly-role-title {
+    font-size: 15px;
+    font-weight: 800;
+    color: var(--text);
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .yearly-total {
+    font-size: 12px;
+    color: var(--text-soft);
+    font-weight: 600;
+    margin-left: auto;
+  }
+  .calendar-months {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+  .cal-month {
+    background: #fafdf7;
+    border-radius: 10px;
+    padding: 8px;
+  }
+  .cal-month-label { font-size: 11px; font-weight: 700; color: var(--text-soft); margin-bottom: 4px; text-align: center; }
+  .cal-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 2px;
+  }
+  .cal-cell {
+    aspect-ratio: 1;
+    background: #ecf2e5;
+    border-radius: 3px;
+  }
+  .cal-cell.done { background: var(--primary); }
+  .cal-cell.empty { background: transparent; }
+
+  .member-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 10px;
+  }
+  .member-stat-card {
+    background: #fafdf7;
+    border-radius: 12px;
+    padding: 12px;
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: all 0.2s;
+  }
+  .member-stat-card:hover {
+    border-color: var(--primary);
+    transform: translateY(-2px);
+  }
+  .member-stat-card .view-detail {
+    font-size: 10px;
+    color: var(--primary-dark);
+    margin-top: 6px;
+    text-align: right;
+    font-weight: 600;
+  }
+
+  /* 학생 상세 모달 */
+  .member-detail-modal { max-width: 720px; width: 92vw; }
+  .member-detail-header {
+    text-align: center;
+    margin-bottom: 16px;
+  }
+  .member-detail-name {
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--text);
+    margin-bottom: 4px;
+  }
+  .member-detail-total {
+    font-size: 13px;
+    color: var(--primary-dark);
+    font-weight: 700;
+    background: var(--primary-soft);
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 999px;
+  }
+  .member-detail-roles-summary {
+    background: #fafdf7;
+    border-radius: 12px;
+    padding: 12px 14px;
+    margin-bottom: 14px;
+    font-size: 13px;
+    line-height: 1.8;
+    color: var(--text);
+  }
+  .member-detail-roles-summary .role-line {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 2px 0;
+  }
+  .member-detail-roles-summary .role-line .count {
+    color: var(--primary-dark);
+    font-weight: 700;
+  }
+  .member-stat-name {
+    font-size: 15px;
+    font-weight: 800;
+    color: var(--text);
+    margin-bottom: 4px;
+  }
+  .member-stat-total {
+    font-size: 12px;
+    color: var(--primary-dark);
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+  .member-stat-roles {
+    font-size: 11px;
+    color: var(--text-soft);
+    line-height: 1.6;
+  }
+
+  @media (max-width: 600px) {
+    body { padding: 10px; }
+    .header { padding: 14px; }
+    .title { font-size: 20px; }
+    .role-grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 8px; }
+    .role-card { padding: 8px 10px; }
+    .role-emoji { font-size: 22px; }
+    .modal { padding: 18px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- 헤더 -->
+  <div class="header">
+    <div class="title-row" onclick="editTitle()" title="제목 수정">
+      <div class="title" id="title">우리 반 1인1역</div>
+      <span class="title-edit-icon">✏️</span>
+    </div>
+    <div class="header-bottom">
+      <div class="today" id="today"></div>
+      <div class="header-btns">
+        <button class="btn" onclick="showView('main')" id="btn-main">🏠 홈으로</button>
+        <button class="btn" onclick="showView('edit')" id="btn-edit">⚙️ 편집</button>
+        <button class="btn" onclick="showView('yearly')" id="btn-yearly">📅 연간기록</button>
+        <button class="btn" onclick="openBackup()">💾 백업</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 메인 뷰 -->
+  <div id="view-main">
+    <div class="progress">
+      <div class="progress-info">
+        <span class="progress-label">오늘의 달성률</span>
+        <span class="progress-count" id="progress-count">0 / 0</span>
+      </div>
+      <div class="progress-bar-bg">
+        <div class="progress-bar-fill" id="progress-bar" style="width: 0%"></div>
+      </div>
+      <div class="motivate" id="motivate">✨ 오늘도 반짝반짝 빛나는 우리 반!</div>
+    </div>
+    <div class="role-grid" id="role-grid"></div>
+  </div>
+
+  <!-- 편집 뷰 -->
+  <div id="view-edit" style="display:none">
+    <div class="edit-section">
+      <div class="edit-section-title">📌 우리 반 역할 편집</div>
+      <div id="edit-roles"></div>
+      <button class="add-role-btn" onclick="addRole()">➕ 새 역할 추가하기</button>
+    </div>
+  </div>
+
+  <!-- 연간 뷰 -->
+  <div id="view-yearly" style="display:none">
+    <div class="yearly-tabs">
+      <button class="yearly-tab-btn active" id="yearly-tab-role" onclick="switchYearlyTab('role')">📅 역할별</button>
+      <button class="yearly-tab-btn" id="yearly-tab-member" onclick="switchYearlyTab('member')">👥 학생별</button>
+    </div>
+    <div id="yearly-content-role">
+      <div class="yearly-section">
+        <div class="edit-section-title"><span id="yearly-year"></span>년 역할별 연간 기록</div>
+        <div id="yearly-roles"></div>
+      </div>
+    </div>
+    <div id="yearly-content-member" style="display:none">
+      <div class="yearly-section">
+        <div class="edit-section-title">👥 학생별 누적 기록 <small style="font-weight:600; color:var(--text-soft); font-size:12px">(카드를 누르면 개인 달력을 볼 수 있어요)</small></div>
+        <div class="member-stats-grid" id="yearly-members"></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- 멤버 체크 모달 -->
+<div class="modal-overlay" id="check-modal" onclick="closeModalBg(event, 'check-modal')">
+  <div class="modal">
+    <div class="modal-emoji" id="check-emoji"></div>
+    <div class="modal-title" id="check-title"></div>
+    <p class="modal-desc">누가 했나요? (다시 누르면 취소)</p>
+    <div class="modal-members" id="check-members"></div>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeModal('check-modal')">닫기</button>
+    </div>
+  </div>
+</div>
+
+<!-- 이모지 피커 모달 -->
+<div class="modal-overlay" id="emoji-modal" onclick="closeModalBg(event, 'emoji-modal')">
+  <div class="modal">
+    <div class="modal-title">이모지 선택</div>
+    <div class="emoji-picker" id="emoji-picker"></div>
+    <div class="modal-actions" style="margin-top:14px">
+      <button class="btn" onclick="closeModal('emoji-modal')">취소</button>
+    </div>
+  </div>
+</div>
+
+<!-- 학생 상세 모달 -->
+<div class="modal-overlay" id="member-detail-modal" onclick="closeModalBg(event, 'member-detail-modal')">
+  <div class="modal member-detail-modal">
+    <div class="member-detail-header">
+      <div class="member-detail-name" id="member-detail-name"></div>
+      <div class="member-detail-total" id="member-detail-total"></div>
+    </div>
+    <div class="member-detail-roles-summary" id="member-detail-roles-summary"></div>
+    <div id="member-detail-calendar"></div>
+    <div class="modal-actions" style="margin-top:14px">
+      <button class="btn" onclick="closeModal('member-detail-modal')">닫기</button>
+    </div>
+  </div>
+</div>
+
+<!-- 백업 모달 -->
+<div class="modal-overlay" id="backup-modal" onclick="closeModalBg(event, 'backup-modal')">
+  <div class="modal">
+    <div class="modal-title">💾 데이터 백업</div>
+    <p class="modal-desc">데이터를 파일로 내보내거나, 다른 기기의 데이터를 불러올 수 있어요.</p>
+    <div style="display:flex; flex-direction:column; gap:10px; margin-bottom:14px">
+      <button class="btn btn-primary" onclick="exportData()">📤 데이터 내보내기 (JSON)</button>
+      <button class="btn" onclick="document.getElementById('import-file').click()">📥 데이터 불러오기</button>
+      <input type="file" id="import-file" accept=".json" style="display:none" onchange="importData(event)">
+      <button class="btn btn-warn" onclick="resetData()">🗑️ 모든 데이터 초기화</button>
+    </div>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeModal('backup-modal')">닫기</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ============ 데이터 관리 ============
+const STORAGE_KEY = 'class_roles_data_v1';
+const DEFAULT_DATA = {
+  title: '우리 반 1인1역',
+  roles: [
+    { id: 1, emoji: '✏️', name: '칠판 도우미', desc: '칠판과 분필 정리', members: ['학생1'] },
+    { id: 2, emoji: '📋', name: '출석부 도우미', desc: '이동 수업 시 출석부 챙기기', members: ['학생2', '학생3'] },
+    { id: 3, emoji: '🧹', name: '정리 정돈 도우미', desc: '교실 깔끔하게 정리', members: ['학생4'] },
+    { id: 4, emoji: '📺', name: '멀티미디어 도우미', desc: '전자칠판, 기자재 관리', members: ['학생5'] },
+    { id: 5, emoji: '🍱', name: '급식 도우미', desc: '급식 식단 안내', members: ['학생6'] }
+  ],
+  checks: {} // { "2026-04-09": { "1": ["학생1"], ... } }
+};
+
+let data = loadData();
+
+function loadData() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) return JSON.parse(raw);
+  } catch (e) { console.error(e); }
+  return JSON.parse(JSON.stringify(DEFAULT_DATA));
+}
+
+function saveData() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+}
+
+function todayStr() {
+  const d = new Date();
+  return d.getFullYear() + '-' +
+    String(d.getMonth() + 1).padStart(2, '0') + '-' +
+    String(d.getDate()).padStart(2, '0');
+}
+
+function nextRoleId() {
+  return data.roles.length === 0 ? 1 : Math.max(...data.roles.map(r => r.id)) + 1;
+}
+
+function getCheckedMembers(roleId, dateStr) {
+  if (!data.checks[dateStr]) return [];
+  return data.checks[dateStr][roleId] || [];
+}
+
+function toggleCheck(roleId, member) {
+  const today = todayStr();
+  if (!data.checks[today]) data.checks[today] = {};
+  if (!data.checks[today][roleId]) data.checks[today][roleId] = [];
+  const list = data.checks[today][roleId];
+  const idx = list.indexOf(member);
+  if (idx >= 0) list.splice(idx, 1);
+  else list.push(member);
+  if (list.length === 0) delete data.checks[today][roleId];
+  if (Object.keys(data.checks[today]).length === 0) delete data.checks[today];
+  saveData();
+}
+
+// ============ 뷰 전환 ============
+function showView(name) {
+  document.getElementById('view-main').style.display = name === 'main' ? '' : 'none';
+  document.getElementById('view-edit').style.display = name === 'edit' ? '' : 'none';
+  document.getElementById('view-yearly').style.display = name === 'yearly' ? '' : 'none';
+  ['main', 'edit', 'yearly'].forEach(v => {
+    const btn = document.getElementById('btn-' + v);
+    if (v === name) btn.classList.add('btn-primary');
+    else btn.classList.remove('btn-primary');
+  });
+  if (name === 'main') renderMain();
+  if (name === 'edit') renderEdit();
+  if (name === 'yearly') renderYearly();
+}
+
+function switchYearlyTab(tab) {
+  document.getElementById('yearly-content-role').style.display = tab === 'role' ? '' : 'none';
+  document.getElementById('yearly-content-member').style.display = tab === 'member' ? '' : 'none';
+  document.getElementById('yearly-tab-role').classList.toggle('active', tab === 'role');
+  document.getElementById('yearly-tab-member').classList.toggle('active', tab === 'member');
+}
+
+// ============ 메인 화면 ============
+function renderMain() {
+  const grid = document.getElementById('role-grid');
+  const today = todayStr();
+
+  if (data.roles.length === 0) {
+    grid.innerHTML = `
+      <div class="empty-msg">
+        <h3>아직 등록된 역할이 없어요</h3>
+        <p>편집 버튼을 눌러 우리 반 역할을 만들어보세요!</p>
+        <button class="btn btn-primary" onclick="showView('edit')">⚙️ 편집하러 가기</button>
+      </div>`;
+    document.getElementById('progress-count').textContent = '0 / 0';
+    document.getElementById('progress-bar').style.width = '0%';
+    return;
+  }
+
+  grid.innerHTML = '';
+  let done = 0;
+  data.roles.forEach(role => {
+    const checked = getCheckedMembers(role.id, today);
+    const allDone = role.members.length > 0 && checked.length >= 1;
+    if (allDone) done++;
+
+    const card = document.createElement('div');
+    card.className = 'role-card' + (allDone ? ' checked' : '');
+    card.onclick = () => openCheckModal(role.id);
+    card.innerHTML = `
+      <span class="role-emoji">${escapeHtml(role.emoji)}</span>
+      <div class="role-name">${escapeHtml(role.name)}</div>
+      <div class="role-desc">${escapeHtml(role.desc || '')}</div>
+      <div class="members-row">
+        ${role.members.map(m => `
+          <span class="member-chip${checked.includes(m) ? ' done' : ''}">
+            ${checked.includes(m) ? '✅ ' : ''}${escapeHtml(m)}
+          </span>
+        `).join('')}
+      </div>
+      <div class="check-status">
+        ${allDone ? '✅ 완료!' : checked.length > 0 ? `🔄 ${checked.length}/${role.members.length}` : '💗 체크하기'}
+      </div>
+    `;
+    grid.appendChild(card);
+  });
+
+  const total = data.roles.length;
+  const pct = total > 0 ? (done / total * 100) : 0;
+  document.getElementById('progress-count').textContent = `${done} / ${total}`;
+  document.getElementById('progress-bar').style.width = pct + '%';
+
+  const motivate = document.getElementById('motivate');
+  if (done === total && total > 0) motivate.textContent = '🎉 오늘 모든 역할 완료! 우리 반 최고!';
+  else if (pct >= 70) motivate.textContent = '💪 거의 다 왔어요! 조금만 더!';
+  else if (pct >= 40) motivate.textContent = '🌸 잘 하고 있어요! 파이팅!';
+  else motivate.textContent = '✨ 오늘도 반짝반짝 빛나는 우리 반!';
+}
+
+// ============ 체크 모달 ============
+let currentCheckRoleId = null;
+function openCheckModal(roleId) {
+  const role = data.roles.find(r => r.id === roleId);
+  if (!role) return;
+  currentCheckRoleId = roleId;
+  document.getElementById('check-emoji').textContent = role.emoji;
+  document.getElementById('check-title').textContent = role.name;
+  renderCheckMembers();
+  document.getElementById('check-modal').classList.add('active');
+}
+
+function renderCheckMembers() {
+  const role = data.roles.find(r => r.id === currentCheckRoleId);
+  if (!role) return;
+  const today = todayStr();
+  const checked = getCheckedMembers(role.id, today);
+  const container = document.getElementById('check-members');
+  container.innerHTML = '';
+  if (role.members.length === 0) {
+    container.innerHTML = '<p style="color:var(--text-soft); font-size:13px">이 역할에는 아직 학생이 등록되지 않았어요.</p>';
+    return;
+  }
+  role.members.forEach(m => {
+    const btn = document.createElement('button');
+    btn.className = 'member-btn' + (checked.includes(m) ? ' selected' : '');
+    btn.textContent = (checked.includes(m) ? '✅ ' : '') + m;
+    btn.onclick = () => {
+      toggleCheck(role.id, m);
+      renderCheckMembers();
+      renderMain();
+    };
+    container.appendChild(btn);
+  });
+}
+
+// ============ 편집 화면 ============
+function renderEdit() {
+  const container = document.getElementById('edit-roles');
+  container.innerHTML = '';
+  data.roles.forEach((role, idx) => {
+    const row = document.createElement('div');
+    row.className = 'edit-role-row';
+    row.innerHTML = `
+      <div class="edit-emoji" onclick="openEmojiPicker(${role.id})" title="이모지 변경">${escapeHtml(role.emoji)}</div>
+      <input class="edit-input edit-name" value="${escapeAttr(role.name)}" placeholder="역할 이름" oninput="updateRole(${role.id}, 'name', this.value)">
+      <input class="edit-input edit-desc" value="${escapeAttr(role.desc || '')}" placeholder="활동 내용" oninput="updateRole(${role.id}, 'desc', this.value)">
+      <div class="role-actions">
+        <button class="icon-btn" onclick="moveRole(${role.id}, -1)" ${idx === 0 ? 'disabled style="opacity:0.3"' : ''}>⬆️</button>
+        <button class="icon-btn" onclick="moveRole(${role.id}, 1)" ${idx === data.roles.length - 1 ? 'disabled style="opacity:0.3"' : ''}>⬇️</button>
+        <button class="icon-btn del" onclick="deleteRole(${role.id})">🗑️</button>
+      </div>
+      <div class="edit-members-wrap">
+        ${role.members.map(m => `
+          <span class="edit-member-chip">
+            ${escapeHtml(m)}
+            <span class="chip-x" onclick="removeMember(${role.id}, '${escapeAttr(m)}')">✕</span>
+          </span>
+        `).join('')}
+        <input class="add-member-input" placeholder="+ 학생" onkeydown="if(event.key==='Enter'){addMember(${role.id}, this.value); this.value=''}">
+      </div>
+    `;
+    container.appendChild(row);
+  });
+}
+
+function updateRole(roleId, field, value) {
+  const role = data.roles.find(r => r.id === roleId);
+  if (!role) return;
+  role[field] = value;
+  saveData();
+}
+
+function addRole() {
+  data.roles.push({
+    id: nextRoleId(),
+    emoji: '⭐',
+    name: '새 역할',
+    desc: '',
+    members: []
+  });
+  saveData();
+  renderEdit();
+}
+
+function deleteRole(roleId) {
+  const role = data.roles.find(r => r.id === roleId);
+  if (!role) return;
+  if (!confirm(`'${role.name}' 역할을 삭제할까요?\n(기록은 그대로 남아있어요)`)) return;
+  data.roles = data.roles.filter(r => r.id !== roleId);
+  saveData();
+  renderEdit();
+}
+
+function moveRole(roleId, direction) {
+  const idx = data.roles.findIndex(r => r.id === roleId);
+  if (idx < 0) return;
+  const newIdx = idx + direction;
+  if (newIdx < 0 || newIdx >= data.roles.length) return;
+  [data.roles[idx], data.roles[newIdx]] = [data.roles[newIdx], data.roles[idx]];
+  saveData();
+  renderEdit();
+}
+
+function addMember(roleId, name) {
+  name = (name || '').trim();
+  if (!name) return;
+  const role = data.roles.find(r => r.id === roleId);
+  if (!role) return;
+  if (role.members.includes(name)) {
+    alert('이미 등록된 학생이에요.');
+    return;
+  }
+  role.members.push(name);
+  saveData();
+  renderEdit();
+}
+
+function removeMember(roleId, name) {
+  const role = data.roles.find(r => r.id === roleId);
+  if (!role) return;
+  role.members = role.members.filter(m => m !== name);
+  saveData();
+  renderEdit();
+}
+
+// ============ 이모지 피커 ============
+const EMOJIS = [
+  '⭐','✨','👑','🌟','💫','🌸','🌷','🌻','🌼','🌹','🌺','🍀',
+  '✏️','📋','📌','📎','📚','📖','📝','📄','📅','📆','🗓️','📊',
+  '🧹','🪣','🧽','🧼','🧴','🪥','🚪','🪟','🪑','🛋️','💡','🔌',
+  '📺','💻','⌨️','🖱️','📱','📷','📹','🎥','🔋','🔍','🔎','🔔',
+  '🍱','🍙','🍚','🥢','🍽️','🥤','🥛','🍵','☕','🍰','🎂','🍪',
+  '💌','💝','💖','💗','💕','💓','💘','❤️','🧡','💛','💚','💙',
+  '🎉','🎊','🎈','🎁','🎀','🎵','🎶','🎨','🖼️','🎭','🎪','🎯',
+  '🐶','🐱','🐰','🐻','🐼','🦊','🐯','🦁','🐸','🐵','🐧','🐤',
+  '⚽','🏀','🏐','🎾','🏓','🏸','🥎','⚾','🎲','🎮','🕹️','🧩'
+];
+let currentEmojiRoleId = null;
+function openEmojiPicker(roleId) {
+  currentEmojiRoleId = roleId;
+  const picker = document.getElementById('emoji-picker');
+  picker.innerHTML = '';
+  EMOJIS.forEach(e => {
+    const div = document.createElement('div');
+    div.className = 'emoji-pick';
+    div.textContent = e;
+    div.onclick = () => {
+      updateRole(currentEmojiRoleId, 'emoji', e);
+      closeModal('emoji-modal');
+      renderEdit();
+    };
+    picker.appendChild(div);
+  });
+  document.getElementById('emoji-modal').classList.add('active');
+}
+
+// ============ 연간 기록 ============
+function renderYearly() {
+  const today = new Date();
+  const year = today.getFullYear();
+  document.getElementById('yearly-year').textContent = year;
+
+  // 월별 날짜 생성 (1월 1일 ~ 오늘)
+  const monthsData = {};
+  for (let m = 0; m < 12; m++) {
+    const monthKey = year + '-' + String(m + 1).padStart(2, '0');
+    const lastDay = new Date(year, m + 1, 0).getDate();
+    monthsData[monthKey] = [];
+    for (let d = 1; d <= lastDay; d++) {
+      const dateStr = monthKey + '-' + String(d).padStart(2, '0');
+      monthsData[monthKey].push(dateStr);
+    }
+  }
+
+  // 역할별 달력
+  const rolesContainer = document.getElementById('yearly-roles');
+  rolesContainer.innerHTML = '';
+
+  if (data.roles.length === 0) {
+    rolesContainer.innerHTML = '<p style="color:var(--text-soft); font-size:13px; text-align:center; padding:20px">등록된 역할이 없어요.</p>';
+  }
+
+  data.roles.forEach(role => {
+    let total = 0;
+    Object.keys(data.checks).forEach(dateStr => {
+      if (dateStr.startsWith(year + '-') && data.checks[dateStr][role.id] && data.checks[dateStr][role.id].length > 0) {
+        total++;
+      }
+    });
+
+    const section = document.createElement('div');
+    section.style.marginBottom = '18px';
+    section.innerHTML = `
+      <div class="yearly-role-title">
+        <span>${escapeHtml(role.emoji)}</span>
+        <span>${escapeHtml(role.name)}</span>
+        <span class="yearly-total">총 ${total}일</span>
+      </div>
+      <div class="calendar-months" id="cal-${role.id}"></div>
+    `;
+    rolesContainer.appendChild(section);
+
+    const calContainer = section.querySelector('.calendar-months');
+    Object.keys(monthsData).forEach(monthKey => {
+      const monthDays = monthsData[monthKey];
+      const monthNum = parseInt(monthKey.split('-')[1]);
+      const firstDay = new Date(year, monthNum - 1, 1).getDay();
+
+      const monthDiv = document.createElement('div');
+      monthDiv.className = 'cal-month';
+      let cells = '';
+      // 첫 주 빈칸
+      for (let i = 0; i < firstDay; i++) cells += '<div class="cal-cell empty"></div>';
+      monthDays.forEach(dateStr => {
+        const checked = data.checks[dateStr] && data.checks[dateStr][role.id] && data.checks[dateStr][role.id].length > 0;
+        cells += `<div class="cal-cell${checked ? ' done' : ''}"></div>`;
+      });
+      monthDiv.innerHTML = `
+        <div class="cal-month-label">${monthNum}월</div>
+        <div class="cal-grid">${cells}</div>
+      `;
+      calContainer.appendChild(monthDiv);
+    });
+  });
+
+  // 학생별 누적
+  const memberMap = {};
+  data.roles.forEach(role => {
+    role.members.forEach(m => {
+      if (!memberMap[m]) memberMap[m] = { total: 0, roles: {} };
+    });
+  });
+  // 모든 체크 기록에서 학생별 카운트
+  Object.keys(data.checks).forEach(dateStr => {
+    if (!dateStr.startsWith(year + '-')) return;
+    const dayChecks = data.checks[dateStr];
+    Object.keys(dayChecks).forEach(roleId => {
+      const role = data.roles.find(r => r.id === parseInt(roleId));
+      const roleName = role ? role.name : '(삭제된 역할)';
+      const roleEmoji = role ? role.emoji : '❔';
+      dayChecks[roleId].forEach(m => {
+        if (!memberMap[m]) memberMap[m] = { total: 0, roles: {} };
+        memberMap[m].total++;
+        const key = roleEmoji + ' ' + roleName;
+        memberMap[m].roles[key] = (memberMap[m].roles[key] || 0) + 1;
+      });
+    });
+  });
+
+  const memberContainer = document.getElementById('yearly-members');
+  memberContainer.innerHTML = '';
+  const sortedNames = Object.keys(memberMap).sort();
+  if (sortedNames.length === 0) {
+    memberContainer.innerHTML = '<p style="color:var(--text-soft); font-size:13px; text-align:center; padding:20px; grid-column:1/-1">등록된 학생이 없어요.</p>';
+  }
+  sortedNames.forEach(name => {
+    const stat = memberMap[name];
+    const card = document.createElement('div');
+    card.className = 'member-stat-card';
+    card.onclick = () => openMemberDetail(name);
+    const rolesList = Object.keys(stat.roles).map(k => `${k} ${stat.roles[k]}회`).join('<br>') || '<i>기록 없음</i>';
+    card.innerHTML = `
+      <div class="member-stat-name">${escapeHtml(name)}</div>
+      <div class="member-stat-total">총 ${stat.total}회</div>
+      <div class="member-stat-roles">${rolesList}</div>
+      <div class="view-detail">📅 달력 보기 →</div>
+    `;
+    memberContainer.appendChild(card);
+  });
+}
+
+// ============ 학생 상세 (개인별 달력) ============
+function openMemberDetail(memberName) {
+  const today = new Date();
+  const year = today.getFullYear();
+
+  // 이 학생이 한 모든 활동 수집: { dateStr: [{ roleId, roleName, roleEmoji }] }
+  const activityByDate = {};
+  const roleCounts = {}; // roleKey -> count
+  let total = 0;
+
+  Object.keys(data.checks).forEach(dateStr => {
+    if (!dateStr.startsWith(year + '-')) return;
+    const dayChecks = data.checks[dateStr];
+    Object.keys(dayChecks).forEach(roleId => {
+      if (dayChecks[roleId].includes(memberName)) {
+        const role = data.roles.find(r => r.id === parseInt(roleId));
+        const roleName = role ? role.name : '(삭제된 역할)';
+        const roleEmoji = role ? role.emoji : '❔';
+        if (!activityByDate[dateStr]) activityByDate[dateStr] = [];
+        activityByDate[dateStr].push({ roleName, roleEmoji });
+        const key = roleEmoji + ' ' + roleName;
+        roleCounts[key] = (roleCounts[key] || 0) + 1;
+        total++;
+      }
+    });
+  });
+
+  document.getElementById('member-detail-name').textContent = memberName;
+  document.getElementById('member-detail-total').textContent = `${year}년 총 ${total}회 활동`;
+
+  // 역할별 요약
+  const summaryEl = document.getElementById('member-detail-roles-summary');
+  if (Object.keys(roleCounts).length === 0) {
+    summaryEl.innerHTML = '<p style="color:var(--text-soft); text-align:center;">아직 활동 기록이 없어요</p>';
+  } else {
+    summaryEl.innerHTML = Object.keys(roleCounts)
+      .sort((a, b) => roleCounts[b] - roleCounts[a])
+      .map(k => `<div class="role-line"><span>${escapeHtml(k)}</span><span class="count">${roleCounts[k]}회</span></div>`)
+      .join('');
+  }
+
+  // 12개월 달력
+  const calContainer = document.getElementById('member-detail-calendar');
+  calContainer.innerHTML = '<div class="calendar-months" id="member-cal-months"></div>';
+  const monthsEl = document.getElementById('member-cal-months');
+
+  for (let m = 0; m < 12; m++) {
+    const monthNum = m + 1;
+    const monthKey = year + '-' + String(monthNum).padStart(2, '0');
+    const lastDay = new Date(year, m + 1, 0).getDate();
+    const firstDay = new Date(year, m, 1).getDay();
+
+    let cells = '';
+    for (let i = 0; i < firstDay; i++) cells += '<div class="cal-cell empty"></div>';
+    for (let d = 1; d <= lastDay; d++) {
+      const dateStr = monthKey + '-' + String(d).padStart(2, '0');
+      const checked = activityByDate[dateStr] && activityByDate[dateStr].length > 0;
+      const tooltip = checked
+        ? activityByDate[dateStr].map(a => a.roleEmoji + ' ' + a.roleName).join(', ')
+        : '';
+      cells += `<div class="cal-cell${checked ? ' done' : ''}" title="${escapeAttr(monthNum + '월 ' + d + '일' + (tooltip ? ': ' + tooltip : ''))}"></div>`;
+    }
+
+    const monthDiv = document.createElement('div');
+    monthDiv.className = 'cal-month';
+    monthDiv.innerHTML = `
+      <div class="cal-month-label">${monthNum}월</div>
+      <div class="cal-grid">${cells}</div>
+    `;
+    monthsEl.appendChild(monthDiv);
+  }
+
+  document.getElementById('member-detail-modal').classList.add('active');
+}
+
+// ============ 제목 편집 ============
+function editTitle() {
+  const newTitle = prompt('우리 반 1인1역의 제목을 입력하세요', data.title);
+  if (newTitle !== null && newTitle.trim()) {
+    data.title = newTitle.trim();
+    saveData();
+    document.getElementById('title').textContent = data.title;
+    document.title = data.title;
+  }
+}
+
+// ============ 백업/복원 ============
+function openBackup() {
+  document.getElementById('backup-modal').classList.add('active');
+}
+
+function exportData() {
+  const json = JSON.stringify(data, null, 2);
+  const blob = new Blob([json], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `1인1역_${todayStr()}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function importData(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    try {
+      const imported = JSON.parse(e.target.result);
+      if (!imported.roles || !Array.isArray(imported.roles)) {
+        alert('올바른 백업 파일이 아니에요.');
+        return;
+      }
+      if (!confirm('현재 데이터를 불러온 데이터로 덮어쓸까요?')) return;
+      data = imported;
+      if (!data.checks) data.checks = {};
+      saveData();
+      closeModal('backup-modal');
+      document.getElementById('title').textContent = data.title || '우리 반 1인1역';
+      showView('main');
+      alert('데이터를 불러왔어요!');
+    } catch (err) {
+      alert('파일을 읽을 수 없어요: ' + err.message);
+    }
+  };
+  reader.readAsText(file);
+  event.target.value = '';
+}
+
+function resetData() {
+  if (!confirm('정말로 모든 데이터를 초기화할까요?\n(역할, 학생, 기록 모두 삭제됩니다)')) return;
+  if (!confirm('한 번 더 확인할게요. 정말 모든 데이터를 삭제할까요?')) return;
+  data = JSON.parse(JSON.stringify(DEFAULT_DATA));
+  saveData();
+  closeModal('backup-modal');
+  document.getElementById('title').textContent = data.title;
+  showView('main');
+}
+
+// ============ 모달 ============
+function closeModal(id) {
+  document.getElementById(id).classList.remove('active');
+}
+function closeModalBg(event, id) {
+  if (event.target.id === id) closeModal(id);
+}
+
+// ============ 유틸 ============
+function escapeHtml(str) {
+  if (str == null) return '';
+  return String(str).replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' })[c]);
+}
+function escapeAttr(str) {
+  return escapeHtml(str).replace(/`/g, '&#96;');
+}
+
+// ============ 초기 ============
+let lastShownDate = '';
+
+function refreshTodayDisplay() {
+  const d = new Date();
+  document.getElementById('today').textContent =
+    d.getFullYear() + '. ' + (d.getMonth() + 1) + '. ' + d.getDate() + '.';
+  // 날짜가 바뀌면 메인 뷰 다시 그리기 (어제 체크 → 오늘 새로 시작)
+  const cur = todayStr();
+  if (lastShownDate && lastShownDate !== cur) {
+    if (document.getElementById('view-main').style.display !== 'none') {
+      renderMain();
+    }
+  }
+  lastShownDate = cur;
+}
+
+function init() {
+  document.getElementById('title').textContent = data.title || '우리 반 1인1역';
+  document.title = data.title || '우리 반 1인1역';
+  refreshTodayDisplay();
+  showView('main');
+  // 1분마다 날짜 체크 (자정 넘으면 자동 갱신)
+  setInterval(refreshTodayDisplay, 60 * 1000);
+}
+init();
+</script>
+</body>
+</html>
